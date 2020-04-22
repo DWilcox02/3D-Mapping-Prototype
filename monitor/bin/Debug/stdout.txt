@@ -1,0 +1,2 @@
+Hello WorldOpenGL is running
+Program has started
