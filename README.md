@@ -1,5 +1,7 @@
 # 3D-Mapping-Prototype
 
+Note: Code:Blocks 10.03 and SDL 1.2 must be installed to run. I'll just post a video of it working instead.
+
 ## 21/4/20
 This is what we plan on eventually importing to a raspberry pi for use during the land rover competition.
 When we order the accelerometers and gyroscopes and a few more US sensors then hopefully we will have a (half) decent product. 
