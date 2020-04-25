@@ -10,8 +10,11 @@
 #include <math.h>
 #define PI 3.14159265358979323846
 #include <iostream>
+#include <vector>  //for std::vector
+#include <string>  //for std::string
 
 using namespace std;
+
 
 //Start of the program
 int main(int argc, char* args[])
@@ -120,20 +123,19 @@ float rpm2 = 0000;
 
 int tachx;
 int tachy;
-int tachcenx0 = 150;
+int tachcenx0 = 320;
 int tachceny0 = 125;
 int tachcenx1 = 320;
-int tachceny1 = 125;
+int tachceny1 = 175;
 int tachcenx2 = 490;
 int tachceny2 = 125;
 
 float ptdeg;
+float ptdist;
 
 
-
-
-
-
+vector<int> xVals;
+vector<int> yVals;
 
 //Main loop
     while ( isRunning)
@@ -177,7 +179,7 @@ float ptdeg;
         //byte two
         rpm1 = szBuff [1];
         //byte three
-        rpm2 = szBuff [2];
+        //rpm2 = szBuff [2];
 
 
 
@@ -199,20 +201,21 @@ float ptdeg;
 
 
         //Dial ONE
-        //Tachometer dials (Math For the 3 dials)
-        ptdeg = (PI * 2) * (rpm0 / 255);
+        ptdeg = (PI * 2) * (rpm0 / 255); //Turns rotation into radians
+        ptdist = ((float) (rpm1 + 50) / 255) * 100;
 
-
-        tachx = tachcenx0 + ( 75 * (cos (ptdeg)) );
-        tachy = tachceny0 + ( 75 * (sin (ptdeg)) );
+        tachx = tachcenx0 + ( ptdist * (cos (ptdeg)) ); //x on unit circle * 75 (all relative to centre of circle)
+        tachy = tachceny0 + ( ptdist * (sin (ptdeg)) ); //y on unit circle * 75 (all relative to centre of circle)
 
         //Tach line
         glBegin(GL_LINES);
-        glColor4ub(255,11,15,255);
+        glColor4ub(255,11,15,0);
         glVertex2f(tachcenx0,tachceny0);
         glVertex2f(tachx,tachy);
         glEnd();
 
+        xVals.push_back(tachx);
+        yVals.push_back(tachy);
         //Numbers
             //Numbers to be placed here, havent figured this out yet
 
@@ -236,9 +239,13 @@ float ptdeg;
 
         glVertex2f( tachcenx0 + ( 80 * (cos (PI * 1.66667)) ),tachceny0 + ( 80 * (sin (PI * 1.66667)) ));
         glVertex2f( tachcenx0 + ( 80 * (cos (PI * 1.83333)) ),tachceny0 + ( 80 * (sin (PI * 1.83333)) ));
+
+        for(int i = 0; i < xVals.size(); i++)
+        {
+            glVertex2f(xVals.at(i), yVals.at(i));
+        }
         glEnd();
-
-
+/*
         //Dial two
         ptdeg = (PI * 2) * (rpm1 / 255);
 
@@ -278,6 +285,7 @@ float ptdeg;
         glVertex2f( tachcenx1 + ( 80 * (cos (PI * 1.83333)) ),tachceny1 + ( 80 * (sin (PI * 1.83333)) ));
         glEnd();
 
+
         //Dial three
         ptdeg = (PI * 2) * (rpm2 / 255);
 
@@ -316,7 +324,7 @@ float ptdeg;
         glVertex2f( tachcenx2 + ( 80 * (cos (PI * 1.66667)) ),tachceny2 + ( 80 * (sin (PI * 1.66667)) ));
         glVertex2f( tachcenx2 + ( 80 * (cos (PI * 1.83333)) ),tachceny2 + ( 80 * (sin (PI * 1.83333)) ));
         glEnd();
-
+*/
 
 
         glPopMatrix(); //End rendering phase
