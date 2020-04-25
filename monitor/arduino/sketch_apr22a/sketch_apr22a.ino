@@ -7,6 +7,16 @@
 // These constants won't change.  They're used to give names
 // Analog input pins that the potentiometer is attached to
 
+int trigger_pin = 2;
+
+int echo_pin = 3;
+
+int buzzer_pin = 11; 
+
+int time;
+
+int distance; 
+
 const int analogInPin = A0; 
 const int analogInPin1 = A1;
 const int analogInPin2 = A2;
@@ -26,6 +36,9 @@ void setup()
 {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600); 
+  pinMode (trigger_pin, OUTPUT); 
+  pinMode (echo_pin, INPUT);
+  pinMode (buzzer_pin, OUTPUT);
 }
 
 void loop() 
@@ -41,21 +54,30 @@ void loop()
 //  outputvalue2 = map(sensorvalue2, 0, 1023, 0, 255);
   
   writevalue[0] = outputvalue;
-//  writevalue[1] = outputvalue;
 //  writevalue[2] = outputvalue;
        
 
   // print the results to the serial monitor:
 //  Serial.print("sensor = " );                       
 //  Serial.print(writevalue[0]);
-        
-  Serial.write(writevalue[0]);
-  
-  Serial.write(53);
   
   //Serial.print("\t");
   // wait 10 milliseconds before the next loop
   // for the analog-to-digital converter to settle
   // after the last reading:
-  delay(10);                    
+  digitalWrite (trigger_pin, HIGH);
+
+    delayMicroseconds (10);
+
+    digitalWrite (trigger_pin, LOW);
+
+    time = pulseIn (echo_pin, HIGH);
+
+    distance = (time * 0.034) / 2;
+
+    writevalue[1] = distance;
+
+    Serial.write(writevalue[0]);
+    delay(10);
+    Serial.write(writevalue[1]);
 }
