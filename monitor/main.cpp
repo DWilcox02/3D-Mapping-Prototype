@@ -51,9 +51,9 @@ int main(int argc, char* args[])
     std::cout << "Program has started\n";
 
 
-//Serial Port Initialization
+        //Serial Port Initialization
 
-        //Open USB port COM3
+        //Open USB port COM4 - the only one working on my PC
         HANDLE hSerial;
 
         hSerial = CreateFile("COM4",
@@ -106,10 +106,6 @@ int main(int argc, char* args[])
 
         //DWORD dwBytesRead = 0;
 
-
-
-
-
     bool isRunning = true;
 
     SDL_Event event;
@@ -134,8 +130,8 @@ float ptdeg;
 float ptdist;
 
 
-vector<int> xVals;
-vector<int> yVals;
+vector<int> xVals; //Array for all the xValues to be drawn
+vector<int> yVals; //Array for all the yValues to be drawn
 
 //Main loop
     while ( isRunning)
@@ -155,10 +151,6 @@ vector<int> yVals;
 
         }
 
-
-
-
-
         //Reading Serial Port
 
 
@@ -170,17 +162,13 @@ vector<int> yVals;
         }
 
 
-
-
         //Take Serial data from COM port and use in program
+        //Very faulty as I can't figure out how to distinguish the 2 in the serial port
 
         //byte one
         rpm0 = szBuff [0];
         //byte two
         rpm1 = szBuff [1];
-        //byte three
-        //rpm2 = szBuff [2];
-
 
 
         //Rendering to the screen
@@ -200,7 +188,7 @@ vector<int> yVals;
 //GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_QUADS, GL_TRIANGLES, GL_POLYGON
 
 
-        //Dial ONE
+        //Dial
         ptdeg = (PI * 2) * (rpm0 / 255); //Turns rotation into radians
         ptdist = ((float) (rpm1 + 50) / 255) * 100;
 
@@ -214,14 +202,14 @@ vector<int> yVals;
         glVertex2f(tachx,tachy);
         glEnd();
 
-        xVals.push_back(tachx);
-        yVals.push_back(tachy);
-        //Numbers
-            //Numbers to be placed here, havent figured this out yet
+        xVals.push_back(tachx); //Writes current xValue to the end of the arrayList
+        yVals.push_back(tachy); //Writes current yValue to same spot
 
-        //Positional points
+        //Points
         glColor4ub(0,0,0,255);
         glBegin(GL_POINTS);
+
+        //Positions on circle
         glVertex2f(tachcenx0 + 80,tachceny0);
         glVertex2f(tachcenx0 - 80,tachceny0);
         glVertex2f(tachcenx0,tachceny0 + 80);
@@ -240,98 +228,16 @@ vector<int> yVals;
         glVertex2f( tachcenx0 + ( 80 * (cos (PI * 1.66667)) ),tachceny0 + ( 80 * (sin (PI * 1.66667)) ));
         glVertex2f( tachcenx0 + ( 80 * (cos (PI * 1.83333)) ),tachceny0 + ( 80 * (sin (PI * 1.83333)) ));
 
+        //Loop through every value in xValues and yValues and draw them to the plane
         for(int i = 0; i < xVals.size(); i++)
         {
             glVertex2f(xVals.at(i), yVals.at(i));
         }
+
         glEnd();
-/*
-        //Dial two
-        ptdeg = (PI * 2) * (rpm1 / 255);
-
-
-        tachx = tachcenx1 + ( 75 * (cos (ptdeg)) );
-        tachy = tachceny1 + ( 75 * (sin (ptdeg)) );
-
-        //Tach line
-        glBegin(GL_LINES);
-        glColor4ub(255,11,15,255);
-        glVertex2f(tachcenx1,tachceny1);
-        glVertex2f(tachx,tachy);
-        glEnd();
-
-        //Numbers
-            //Numbers to be placed here, havent figured this out yet
-
-        //Positional points
-        glColor4ub(0,0,0,255);
-        glBegin(GL_POINTS);
-        glVertex2f(tachcenx1 + 80,tachceny1);
-        glVertex2f(tachcenx1 - 80,tachceny1);
-        glVertex2f(tachcenx1,tachceny1 + 80);
-        glVertex2f(tachcenx1,tachceny1 - 80);
-
-        //2 for each quadrant
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI / 6)) ),tachceny1 + ( 80 * (sin (PI / 6)) ));
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI / 3)) ),tachceny1 + ( 80 * (sin (PI / 3)) ));
-
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI * .666667)) ),tachceny1 + ( 80 * (sin (PI * .666667)) ));
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI * .833333)) ),tachceny1 + ( 80 * (sin (PI * .833333)) ));
-
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI * 1.16667)) ),tachceny1 + ( 80 * (sin (PI * 1.16667)) ));
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI * 1.33333)) ),tachceny1 + ( 80 * (sin (PI * 1.33333)) ));
-
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI * 1.66667)) ),tachceny1 + ( 80 * (sin (PI * 1.66667)) ));
-        glVertex2f( tachcenx1 + ( 80 * (cos (PI * 1.83333)) ),tachceny1 + ( 80 * (sin (PI * 1.83333)) ));
-        glEnd();
-
-
-        //Dial three
-        ptdeg = (PI * 2) * (rpm2 / 255);
-
-
-        tachx = tachcenx2 + ( 75 * (cos (ptdeg)) );
-        tachy = tachceny2 + ( 75 * (sin (ptdeg)) );
-
-        //Tach line
-        glBegin(GL_LINES);
-        glColor4ub(255,11,15,255);
-        glVertex2f(tachcenx2,tachceny2);
-        glVertex2f(tachx,tachy);
-        glEnd();
-
-        //Numbers
-            //Numbers to be placed here, havent figured this out yet
-
-        //Positional points
-        glColor4ub(0,0,0,255);
-        glBegin(GL_POINTS);
-        glVertex2f(tachcenx2 + 80,tachceny2);
-        glVertex2f(tachcenx2 - 80,tachceny2);
-        glVertex2f(tachcenx2,tachceny2 + 80);
-        glVertex2f(tachcenx2,tachceny2 - 80);
-
-        //2 for each quadrant
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI / 6)) ),tachceny2 + ( 80 * (sin (PI / 6)) ));
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI / 3)) ),tachceny2 + ( 80 * (sin (PI / 3)) ));
-
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI * .666667)) ),tachceny2 + ( 80 * (sin (PI * .666667)) ));
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI * .833333)) ),tachceny2 + ( 80 * (sin (PI * .833333)) ));
-
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI * 1.16667)) ),tachceny2 + ( 80 * (sin (PI * 1.16667)) ));
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI * 1.33333)) ),tachceny2 + ( 80 * (sin (PI * 1.33333)) ));
-
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI * 1.66667)) ),tachceny2 + ( 80 * (sin (PI * 1.66667)) ));
-        glVertex2f( tachcenx2 + ( 80 * (cos (PI * 1.83333)) ),tachceny2 + ( 80 * (sin (PI * 1.83333)) ));
-        glEnd();
-*/
-
 
         glPopMatrix(); //End rendering phase
 
-
-
-        //Draw to screen
         SDL_GL_SwapBuffers();
 
         SDL_Delay(10); //Hold rendered frame on screen for indicated amount of time
